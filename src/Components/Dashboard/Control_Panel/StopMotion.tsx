@@ -7,7 +7,7 @@ export default function Stop() {
 
   const vel_Control = () => {
     axios
-      .post(`http://${DASHBOARD_IP}:8000/api/velocity_test`, {
+      .post(`http://${DASHBOARD_IP}:8001/api/velocity_test`, {
         x: 0,
         y: 0,
         theta: 0,
