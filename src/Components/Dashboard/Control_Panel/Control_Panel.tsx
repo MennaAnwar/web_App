@@ -17,11 +17,11 @@ const ControlPanel: FC = () => {
           <hr className="hr hr-blurry" />
           <VelocityControl />
           <hr className="hr hr-blurry" />
+          <ArmControl />
+          <hr className="hr hr-blurry" />
           <PID />
           <hr className="hr hr-blurry" />
           <KeyboardControl />
-          <hr className="hr hr-blurry" />
-          <ArmControl />
         </>
       }
     />

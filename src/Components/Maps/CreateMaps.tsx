@@ -31,7 +31,7 @@ import Loader from "../Loader/Loader";
 interface InitialNode {
   id: string;
   type: string;
-  data: { label: string };
+  data: { label: string; X: number; Y: number };
   position: XYPosition;
 }
 
@@ -39,7 +39,7 @@ const initialNode: InitialNode[] = [
   {
     id: "1",
     type: "input",
-    data: { label: "input node" },
+    data: { label: "input node", X: 0, Y: 0 },
     position: { x: 250, y: 5 },
   },
 ];
@@ -135,11 +135,12 @@ const Flow: React.FC = () => {
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       }) as XYPosition;
+
       const newNode: Node = {
         id: getId(),
         type,
         position,
-        data: { label: `${type} node` },
+        data: { label: `${type} node`, X: 0, Y: 0 },
       };
 
       setNodes((nds) => {
@@ -190,27 +191,48 @@ const Flow: React.FC = () => {
 
   const onNodeClick = useCallback(
     async (event: React.MouseEvent, node: Node) => {
-      const { value: newLabel } = await Swal.fire({
-        title: "Enter new label",
-        input: "text",
-        inputLabel: "New label",
-        inputValue: node.data.label,
+      const { value: formValues } = await Swal.fire({
+        title: "Update Node",
+        html: `
+                <label for="swal-input1">New label</label>
+                <input id="swal-input1" class="swal2-input" value="${node.data.label}">
+                <label for="swal-input2">New X</label>
+                <input id="swal-input2" class="swal2-input" type="number" value="${node.data.X}">
+                <label for="swal-input3">New Y</label>
+                <input id="swal-input3" class="swal2-input" type="number" value="${node.data.Y}">
+            `,
+        focusConfirm: false,
         showCancelButton: true,
-        inputValidator: (value) => {
-          if (!value) {
-            return "You need to write something!";
+        preConfirm: () => {
+          const label = (
+            document.getElementById("swal-input1") as HTMLInputElement
+          ).value;
+          const x = parseFloat(
+            (document.getElementById("swal-input2") as HTMLInputElement).value
+          );
+          const y = parseFloat(
+            (document.getElementById("swal-input3") as HTMLInputElement).value
+          );
+
+          if (!label) {
+            Swal.showValidationMessage(
+              "You need to write something for the label!"
+            );
           }
+
+          return { label, x, y };
         },
       });
 
-      if (newLabel) {
+      if (formValues) {
+        const { label, x, y } = formValues;
         setNodes((nds) => {
           const updatedNodes = nds.map((n) =>
             n.id === node.id
-              ? { ...n, data: { ...n.data, label: newLabel } }
+              ? { ...n, data: { ...n.data, label, X: x, Y: y } }
               : n
           );
-          console.log("Nodes after label update:", updatedNodes); // Log nodes after label update
+          console.log("Nodes after label and position update:", updatedNodes); // Log nodes after label and position update
           return updatedNodes;
         });
       }
