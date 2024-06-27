@@ -194,12 +194,32 @@ const Flow: React.FC = () => {
       const { value: formValues } = await Swal.fire({
         title: "Update Node",
         html: `
-                <label for="swal-input1">New label</label>
-                <input id="swal-input1" class="swal2-input" value="${node.data.label}">
-                <label for="swal-input2">New X</label>
-                <input id="swal-input2" class="swal2-input" type="number" value="${node.data.X}">
-                <label for="swal-input3">New Y</label>
-                <input id="swal-input3" class="swal2-input" type="number" value="${node.data.Y}">
+        <div id="UpdateNode">
+          <div class="row" style="display: flex; align-items: center;">
+            <div class="col-3">
+              <label for="swal-input1">New label</label>
+            </div>
+            <div class="col-8">
+              <input id="swal-input1" class="swal2-input" value="${node.data.label}">
+            </div>
+          </div>
+          <div class="row" style="display: flex; align-items: center;">
+            <div class="col-3">
+              <label for="swal-input2">New X</label>
+            </div>
+            <div class="col-8">
+              <input id="swal-input2" class="swal2-input" type="number" value="${node.data.X}">
+            </div>
+        </div>
+        <div class="row" style="display: flex; align-items: center;">
+          <div class="col-3">
+            <label for="swal-input3">New Y</label>
+          </div>
+          <div class="col-8">
+            <input id="swal-input3" class="swal2-input" type="number" value="${node.data.Y}">
+          </div>
+        </div>
+      </div>
             `,
         focusConfirm: false,
         showCancelButton: true,

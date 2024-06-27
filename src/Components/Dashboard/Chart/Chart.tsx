@@ -12,6 +12,10 @@ interface ISeries {
   data: IDataPoint[];
 }
 
+interface SpeedTimeChartProps {
+  speeds: number[];
+}
+
 const initialVehicleCount = 4; // Number of vehicles
 
 const chartOptions: ApexOptions = {
@@ -55,10 +59,10 @@ const chartOptions: ApexOptions = {
   },
 };
 
-const SpeedTimeChart = () => {
+const SpeedTimeChart: React.FC<SpeedTimeChartProps> = ({ speeds }) => {
   const [series, setSeries] = useState<ISeries[]>(
     Array.from({ length: initialVehicleCount }, (_, index) => ({
-      name: `Vehicle ${index + 1}`,
+      name: `Motor ${index + 1}`,
       data: [],
     }))
   );
@@ -66,8 +70,8 @@ const SpeedTimeChart = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date().getTime();
-      const newSeries = series.map((vehicle) => {
-        const newSpeed = Math.floor(Math.random() * (90 - 10 + 1)) + 10; // Generate random speed between 10 and 90
+      const newSeries = series.map((vehicle, index) => {
+        const newSpeed = speeds[index]; // Use the provided speeds
         const newDataPoint = { x: now, y: newSpeed };
         const newData = [...vehicle.data, newDataPoint].slice(-10); // Keep the last 10 data points
 
@@ -75,10 +79,10 @@ const SpeedTimeChart = () => {
       });
 
       setSeries(newSeries);
-    }, 2000); // Update speeds every 2 seconds
+    }, 1000); // Update speeds every 2 seconds
 
     return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, [series]);
+  }, [series, speeds]);
 
   return (
     <div id="chart">

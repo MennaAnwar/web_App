@@ -20,7 +20,7 @@ const Nodes: React.FC = () => {
         </ul>
       </div>
       <div className="description">
-        You can drag these nodes to the pane on the right.
+        You can drag these nodes to the panel on the right.
       </div>
       <div
         className="dndnode input"

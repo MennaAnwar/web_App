@@ -21,3 +21,13 @@
   font-weight: 500;
   color: var(--text-color);
 }
+
+table tr td,
+table tr th {
+  background-color: transparent !important;
+}
+
+.status {
+  overflow-y: scroll;
+  max-height: 200px;
+}

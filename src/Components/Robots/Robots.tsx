@@ -13,6 +13,8 @@ interface Robot {
   id: number;
   name: string;
   IP: string;
+  Task_id?: number;
+  task_name?: string;
 }
 
 export default function Robots() {
@@ -26,6 +28,7 @@ export default function Robots() {
   } = useContext(Context);
 
   const [robots, setRobots] = useState<Robot[]>([]);
+  const [tasks, setTasks] = useState<any[]>([]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -42,6 +45,26 @@ export default function Robots() {
         }
         setRobots(response.data);
         console.log(response.data);
+        return response.data;
+      })
+      .catch(function (error) {
+        console.error("Failed to fetch data:", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+
+    axios
+      .get(`http://${WEB_IP}:8000/api/getTasks`, {
+        headers: {
+          Authorization: `Bearer ${userData.token}`,
+        },
+      })
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error(response.statusText);
+        }
+        setTasks(response.data);
         return response.data;
       })
       .catch(function (error) {
@@ -191,7 +214,9 @@ export default function Robots() {
           <label for="robot-name">Robot Name:</label>
         </div>
         <div class="col-8">
-          <input type="text" id="robot-name" value=${Robot?.name} class="swal2-input" />
+          <input type="text" id="robot-name" value=${
+            Robot?.name
+          } class="swal2-input" />
         </div>
       </div>
       <div class="row" style="display: flex; align-items: center;">
@@ -199,9 +224,26 @@ export default function Robots() {
           <label for="robot-IP">Robot IP:</label>
         </div>
         <div class="col-8">
-          <input type="text" id="robot-IP" value=${Robot?.IP} class="swal2-input" />
+          <input type="text" id="robot-IP" value=${
+            Robot?.IP
+          } class="swal2-input" />
         </div>
       <div>
+      <div class="row" style="display: flex; align-items: center;">
+        <div class="col-3">
+          <label for="robot-name">Task:</label>
+        </div>
+        <div class="col-8">
+          <select id="task-select" class="swal2-input">
+          <option value="" disabled selected>
+                    Select Task
+                  </option>
+            ${tasks.map(
+              (task) => `<option value="${task.id}">${task.name}</option>`
+            )}
+          </select>
+        </div>
+      </div>
     `,
       customClass: {
         popup: "swal-robot-popup",
@@ -216,9 +258,16 @@ export default function Robots() {
         const IPElement = document.getElementById(
           "robot-IP"
         ) as HTMLSelectElement;
+        const TaskElement = document.getElementById(
+          "task-select"
+        ) as HTMLSelectElement;
 
         const name = nameElement?.value;
         const IP = IPElement?.value;
+        const Task_id = parseInt(TaskElement?.value);
+        const task = tasks.find((task) => task.id === Task_id);
+        const task_Name = task ? task.name : null;
+        console.log(Task_id);
 
         if (!name) {
           Swal.showValidationMessage("Please enter a robot name.");
@@ -230,10 +279,15 @@ export default function Robots() {
           return;
         }
 
+        if (!Task_id) {
+          Swal.showValidationMessage("Please select a Task.");
+          return;
+        }
+
         return axios
           .put(
             `http://${WEB_IP}:8000/api/editRobot`,
-            { Robot_id, name, IP },
+            { Robot_id, name, IP, Task_id, task_Name },
             {
               headers: {
                 Authorization: `Bearer ${userData.token}`,
@@ -246,6 +300,7 @@ export default function Robots() {
             }
             setRobots(response.data.robots);
             console.log(response.data.robots);
+            AssignTask(IP, task_Name);
             return response.data;
           })
           .catch((error) => {
@@ -273,6 +328,31 @@ export default function Robots() {
     });
   };
 
+  const AssignTask = (IP: string, taskName: string) => {
+    axios
+      .post(
+        `http://${IP}:8001/api/assignTask`,
+        { taskname: taskName },
+        {
+          headers: {
+            Authorization: `Bearer ${userData.token}`,
+          },
+        }
+      )
+      .then((response) => {
+        if (response.status !== 200 && response.status !== 201) {
+          throw new Error(response.statusText);
+        }
+        console.log(response.data);
+        return response.data;
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log(error.response);
+        }
+      });
+  };
+
   return isLoading ? (
     <Loader />
   ) : (
@@ -298,6 +378,7 @@ export default function Robots() {
                 <th scope="col">#</th>
                 <th scope="col">Robot</th>
                 <th scope="col">IP</th>
+                <th scope="col">Task</th>
                 <th scope="col"></th>
               </tr>
             </thead>
@@ -309,6 +390,7 @@ export default function Robots() {
                     <Link to={`/robots/${item.id}/dashboard`}>{item.name}</Link>
                   </td>
                   <td>{item.IP}</td>
+                  <td>{item.task_name ? item.task_name : "-"}</td>
                   <td>
                     <i
                       className="bx bx-edit fs-4 text-primary mx-2"

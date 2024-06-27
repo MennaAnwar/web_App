@@ -4,7 +4,6 @@ import PositionControl from "./PositionControl";
 import "./Control_Panel.css";
 import VelocityControl from "./VelocityControl";
 import PID from "./PID";
-import KeyboardControl from "./KeyboardControl";
 import ArmControl from "./ArmControl";
 
 const ControlPanel: FC = () => {
@@ -20,8 +19,6 @@ const ControlPanel: FC = () => {
           <ArmControl />
           <hr className="hr hr-blurry" />
           <PID />
-          <hr className="hr hr-blurry" />
-          <KeyboardControl />
         </>
       }
     />

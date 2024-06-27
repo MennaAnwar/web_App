@@ -4,7 +4,7 @@ import axios from "axios";
 import Context from "../../../Context";
 
 const ArmControl: FC = () => {
-  const attributes = ["Prismatic", "Revolute"];
+  const attributes = ["Angle", "Gripper"];
   const { DASHBOARD_IP } = useContext(Context);
 
   const {
@@ -14,8 +14,8 @@ const ArmControl: FC = () => {
   } = useForm<any>();
 
   const [params, setParams] = useState<any>({
-    Prismatic: 0,
-    Revolute: 0,
+    Angle: 0,
+    Gripper: 0,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,8 +28,8 @@ const ArmControl: FC = () => {
   const ARM_Control = () => {
     axios
       .post(`http://${DASHBOARD_IP}:8001/api/ARM_test`, {
-        Prismatic: params.Prismatic,
-        Revolute: params.Revolute,
+        Angle: params.Angle,
+        Gripper: params.Gripper,
       })
       .then((res) => {
         console.log(res.data);

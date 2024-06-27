@@ -19,7 +19,6 @@ export default function Welcome() {
                   Let's shape the future !"
                 </p>
               </div>
-              <div>img to be added</div>
             </div>
           </div>
         </div>
